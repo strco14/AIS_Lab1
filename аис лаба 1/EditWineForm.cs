@@ -24,6 +24,7 @@ namespace аис_лаба_1
             country.SelectedItem = wine.Homeland;
             type.SelectedItem = wine.Type;
             sugar.SelectedItem = wine.Sugar;
+            this.BackColor = Color.FromArgb(128, 0, 0);
         }
 
         private void ChangeBtn_Click(object sender, EventArgs e)

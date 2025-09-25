@@ -13,27 +13,60 @@ namespace аис_лаба_1
     public partial class Form1 : Form
     {
         private Logic logic = new Logic();
+
         public Form1()
         {
             InitializeComponent();
 
-            UpdateList(logic.GetWines());
+            
+            dataGridView1.AutoGenerateColumns = false;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+
+            // Создание колонок
+            dataGridView1.Columns.Add("Name", "Название");
+            dataGridView1.Columns.Add("Type", "Тип");
+            dataGridView1.Columns.Add("Sugar", "Сахар");
+            dataGridView1.Columns.Add("Homeland", "Страна");
+            dataGridView1.Columns.Add("Mark", "Оценка");
+            this.BackColor = Color.FromArgb(128, 0, 0);
+            dataGridView1.BackgroundColor = Color.FromArgb(128, 0, 0);
+            dataGridView1.BorderStyle = BorderStyle.None;
+            UpdateDataGrid(logic.GetWines());
+            groupBox1.BackColor = Color.FromArgb(128, 0, 0);
+            groupBox2.BackColor = Color.FromArgb(128, 0, 0);
         }
-        private void UpdateList(List<Wine> wines)
+        /// <summary>
+        /// обновление таблицы вин
+        /// </summary>
+        /// <param name="wines"></param>
+        private void UpdateDataGrid(List<Wine> wines)
         {
-            listWines.Items.Clear();
+            dataGridView1.Rows.Clear();
             foreach (var wine in wines)
             {
-                listWines.Items.Add(wine);
+                dataGridView1.Rows.Add(
+                    wine.Name,
+                    wine.Type,
+                    wine.Sugar,
+                    wine.Homeland,
+                    wine.Rating
+                );
             }
         }
+
         private void AddWineBtn_Click(object sender, EventArgs e)
         {
             var formAdd = new AddWineForm();
-            if(formAdd.ShowDialog() == DialogResult.OK)
+            if (formAdd.ShowDialog() == DialogResult.OK)
             {
-                logic.AddWine(formAdd.wine);
-                UpdateList(logic.GetWines());
+                if(logic.CheckWineInList(formAdd.wine))
+                {
+                    logic.AddWine(formAdd.wine);
+                    UpdateDataGrid(logic.GetWines());
+                }
+                else MessageBox.Show("Такое вино уже есть");
             }
             else
             {
@@ -43,13 +76,21 @@ namespace аис_лаба_1
 
         private void ChangeWineBtn_Click(object sender, EventArgs e)
         {
-            if(listWines.SelectedItem != null)
+            if (dataGridView1.SelectedRows.Count > 0)
             {
-                var formChange = new EditWineForm((Wine)listWines.SelectedItem);
+                // Получаем выбранное вино из исходного списка
+                int selectedIndex = dataGridView1.SelectedRows[0].Index;
+                Wine selectedWine = logic.GetWines()[selectedIndex];
+
+                var formChange = new EditWineForm(selectedWine);
                 if (formChange.ShowDialog() == DialogResult.OK)
                 {
-                    logic.ChangeWine(formChange.wine, listWines.SelectedIndex);
-                    UpdateList(logic.GetWines());
+                    if (logic.CheckWineInList(formChange.wine))
+                    {
+                        logic.ChangeWine(formChange.wine, selectedIndex);
+                        UpdateDataGrid(logic.GetWines());
+                    }
+                    else MessageBox.Show("Такое вино уже есть");
                 }
                 else
                 {
@@ -60,15 +101,17 @@ namespace аис_лаба_1
             {
                 MessageBox.Show("Нужно выбрать вино");
             }
-
         }
 
         private void DeleteWineBtn_Click(object sender, EventArgs e)
         {
-            if (listWines.SelectedItem != null)
+            if (dataGridView1.SelectedRows.Count > 0)
             {
-                logic.RemoveWine((Wine)listWines.SelectedItem);
-                UpdateList(logic.GetWines());
+                int selectedIndex = dataGridView1.SelectedRows[0].Index;
+                Wine selectedWine = logic.GetWines()[selectedIndex];
+
+                logic.RemoveWine(selectedWine);
+                UpdateDataGrid(logic.GetWines());
             }
             else
             {
@@ -82,26 +125,33 @@ namespace аис_лаба_1
             if (DialogResult.OK == searchForm.ShowDialog())
             {
                 var elemWine = searchForm.wine;
-                
-               UpdateList(logic.SearchWines(elemWine.Name, elemWine.Type,
-                   elemWine.Sugar, elemWine.Homeland));
+
+                UpdateDataGrid(logic.SearchWines(
+                    elemWine.Name,
+                    elemWine.Type,
+                    elemWine.Sugar,
+                    elemWine.Homeland
+                ));
             }
         }
 
         private void AllWine_Click(object sender, EventArgs e)
         {
-            UpdateList(logic.GetWines());
+            UpdateDataGrid(logic.GetWines());
         }
 
         private void GettingMarkBtn_Click(object sender, EventArgs e)
         {
-            if (listWines.SelectedItem != null)
-            { 
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                int selectedIndex = dataGridView1.SelectedRows[0].Index;
+                Wine selectedWine = logic.GetWines()[selectedIndex];
+
                 var gettingMarkForm = new GettingMarkForm();
                 if (DialogResult.OK == gettingMarkForm.ShowDialog())
                 {
-                    logic.GetMark(gettingMarkForm.Mark, (Wine)listWines.SelectedItem);
-                    UpdateList(logic.GetWines());
+                    logic.GetMark(gettingMarkForm.Mark, selectedWine);
+                    UpdateDataGrid(logic.GetWines());
                 }
             }
             else
@@ -112,7 +162,9 @@ namespace аис_лаба_1
 
         private void BestWinesBtn_Click(object sender, EventArgs e)
         {
-            UpdateList(logic.BestWines());
+            UpdateDataGrid(logic.BestWines());
         }
+
+       
     }
 }

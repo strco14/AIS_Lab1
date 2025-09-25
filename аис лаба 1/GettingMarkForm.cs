@@ -16,6 +16,7 @@ namespace аис_лаба_1
         public GettingMarkForm()
         {
             InitializeComponent();
+            this.BackColor = Color.FromArgb(128, 0, 0);
         }
 
         private void button1_Click(object sender, EventArgs e)

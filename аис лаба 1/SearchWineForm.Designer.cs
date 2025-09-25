@@ -28,11 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchWineForm));
             this.nameWine = new System.Windows.Forms.TextBox();
             this.sugar = new System.Windows.Forms.ComboBox();
             this.type = new System.Windows.Forms.ComboBox();
             this.country = new System.Windows.Forms.ComboBox();
             this.SearchBtn = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // nameWine
@@ -79,11 +82,22 @@
             this.SearchBtn.UseVisualStyleBackColor = true;
             this.SearchBtn.Click += new System.EventHandler(this.SearchBtn_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(24, 63);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(276, 189);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 15;
+            this.pictureBox1.TabStop = false;
+            // 
             // SearchWineForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(611, 124);
+            this.ClientSize = new System.Drawing.Size(625, 246);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.SearchBtn);
             this.Controls.Add(this.nameWine);
             this.Controls.Add(this.sugar);
@@ -91,6 +105,7 @@
             this.Controls.Add(this.country);
             this.Name = "SearchWineForm";
             this.Text = "SearchWineForm";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -103,5 +118,6 @@
         private System.Windows.Forms.ComboBox type;
         private System.Windows.Forms.ComboBox country;
         private System.Windows.Forms.Button SearchBtn;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

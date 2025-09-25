@@ -19,6 +19,7 @@ namespace аис_лаба_1
             country.Items.AddRange(new string[] { "Франция", "Италия", "Испания", "Россия", "Аргентина" });
             type.Items.AddRange(new string[] { "Белое", "Красное" });
             sugar.Items.AddRange(new string[] { "Сладкое", "Полусладкое", "Сухое", "Полусухое" });
+            this.BackColor = Color.FromArgb(128, 0, 0);
         }
 
         private void SearchBtn_Click(object sender, EventArgs e)

@@ -28,11 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddWineForm));
             this.nameWine = new System.Windows.Forms.TextBox();
             this.type = new System.Windows.Forms.ComboBox();
             this.sugar = new System.Windows.Forms.ComboBox();
             this.country = new System.Windows.Forms.ComboBox();
             this.addBtn = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // nameWine
@@ -80,11 +83,22 @@
             this.addBtn.UseVisualStyleBackColor = true;
             this.addBtn.Click += new System.EventHandler(this.addBtn_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(25, 53);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(397, 199);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 5;
+            this.pictureBox1.TabStop = false;
+            // 
             // AddWineForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(610, 85);
+            this.ClientSize = new System.Drawing.Size(623, 253);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.addBtn);
             this.Controls.Add(this.nameWine);
             this.Controls.Add(this.sugar);
@@ -92,6 +106,7 @@
             this.Controls.Add(this.country);
             this.Name = "AddWineForm";
             this.Text = "AddWineForm";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -103,5 +118,6 @@
         private System.Windows.Forms.ComboBox sugar;
         private System.Windows.Forms.ComboBox country;
         private System.Windows.Forms.Button addBtn;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
