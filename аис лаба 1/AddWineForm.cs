@@ -1,43 +1,74 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using Shared;
 
 namespace аис_лаба_1
 {
     public partial class AddWineForm : Form
     {
-        public Wine wine;
+        public WineDto WineDto { get; private set; }
         public AddWineForm()
         {
             InitializeComponent();
+            
 
-            country.Items.AddRange(new string[] {"Франция", "Италия", "Испания", "Россия", "Аргентина"});
+
+            country.Items.AddRange(new string[] { "Франция", "Италия", "Испания", "Россия", "Аргентина" });
             type.Items.AddRange(new string[] { "Белое", "Красное" });
-            sugar.Items.AddRange(new string[] {"Сладкое", "Полусладкое", "Сухое", "Полусухое"});
+            sugar.Items.AddRange(new string[] { "Сладкое", "Полусладкое", "Сухое", "Полусухое" });
             this.BackColor = Color.FromArgb(128, 0, 0);
         }
-        
-
         private void addBtn_Click(object sender, EventArgs e)
         {
-            if ((nameWine.Text != "" && nameWine.Text != "Название") && type.SelectedItem != null &&
-                sugar.SelectedItem != null && country.SelectedItem != null)
+            if (ValidateInput())
             {
-                wine = new Wine(nameWine.Text.ToString(), type.SelectedItem.ToString(), 
-                    sugar.SelectedItem.ToString(), country.SelectedItem.ToString());
+                WineDto = new WineDto(
+            name: nameWine.Text.Trim(),
+            type: type.SelectedItem.ToString(),
+            sugar: sugar.SelectedItem.ToString(),
+            homeland: country.SelectedItem.ToString());
+
                 DialogResult = DialogResult.OK;
                 Close();
             }
             else
             {
-                DialogResult = DialogResult.Cancel; Close();
+                MessageBox.Show(
+                    "Пожалуйста, заполните все поля правильно.\nНазвание не должно быть пустым.",
+                    "Ошибка ввода",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                nameWine.Focus();
             }
+        }
+        /// <summary>
+        /// Проверка на правильность данных
+        /// </summary>
+        /// <returns></returns>
+        private bool ValidateInput()
+        {
+
+            if (string.IsNullOrWhiteSpace(nameWine.Text))
+            {
+                nameWine.BackColor = Color.LightPink;
+                return false;
+            }
+
+            nameWine.BackColor = Color.White;
+
+
+            if (type.SelectedItem == null ||
+                sugar.SelectedItem == null ||
+                country.SelectedItem == null)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

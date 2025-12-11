@@ -1,44 +1,97 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using Shared;
 
 namespace аис_лаба_1
 {
     public partial class EditWineForm : Form
     {
-        public Wine wine;
-        public EditWineForm(Wine wine)
+        public WineDto WineDto { get; private set; }
+        private WineDto _originalWine;
+        public EditWineForm(WineDto wineToEdit)
         {
             InitializeComponent();
+
+            if (wineToEdit == null)
+                throw new ArgumentNullException(nameof(wineToEdit));
+
+            _originalWine = wineToEdit;
+            LoadWineData();
             country.Items.AddRange(new string[] { "Франция", "Италия", "Испания", "Россия", "Аргентина" });
             type.Items.AddRange(new string[] { "Белое", "Красное" });
             sugar.Items.AddRange(new string[] { "Сладкое", "Полусладкое", "Сухое", "Полусухое" });
-
-            nameWine.Text = wine.Name;
-            country.SelectedItem = wine.Homeland;
-            type.SelectedItem = wine.Type;
-            sugar.SelectedItem = wine.Sugar;
             this.BackColor = Color.FromArgb(128, 0, 0);
         }
+        private void LoadWineData()
+        {
+            nameWine.Text = _originalWine.Name;
 
+            type.SelectedItem = _originalWine.Type;
+            sugar.SelectedItem = _originalWine.Sugar;
+            country.SelectedItem = _originalWine.Homeland;
+
+
+            if (type.SelectedItem == null)
+                type.Items.Add(_originalWine.Type);
+            if (sugar.SelectedItem == null)
+                sugar.Items.Add(_originalWine.Sugar);
+            if (country.SelectedItem == null)
+                country.Items.Add(_originalWine.Homeland);
+
+
+            type.SelectedItem = _originalWine.Type;
+            sugar.SelectedItem = _originalWine.Sugar;
+            country.SelectedItem = _originalWine.Homeland;
+        }
+        /// <summary>
+        /// Проверка значений
+        /// </summary>
+        /// <returns></returns>
+        private bool ValidateInput()
+        {
+
+            if (string.IsNullOrWhiteSpace(nameWine.Text))
+            {
+                nameWine.BackColor = Color.LightPink;
+                return false;
+            }
+
+            nameWine.BackColor = Color.White;
+
+
+            if (type.SelectedItem == null ||
+                sugar.SelectedItem == null ||
+                country.SelectedItem == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
         private void ChangeBtn_Click(object sender, EventArgs e)
         {
-            if (nameWine.Text != "")
+            if (ValidateInput())
             {
-                wine = new Wine(nameWine.Text.ToString(), type.SelectedItem.ToString(),
-                    sugar.SelectedItem.ToString(), country.SelectedItem.ToString());
+                WineDto = new WineDto(
+                id: _originalWine.Id,
+                name: nameWine.Text.Trim(),
+                type: type.SelectedItem.ToString(),
+                sugar: sugar.SelectedItem.ToString(),
+                homeland: country.SelectedItem.ToString(),
+                rating: _originalWine.Rating);
+
                 DialogResult = DialogResult.OK;
                 Close();
             }
             else
             {
-                DialogResult = DialogResult.Cancel; Close();
+                MessageBox.Show(
+                    "Пожалуйста, заполните все поля правильно.",
+                    "Ошибка ввода",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
         }
     }

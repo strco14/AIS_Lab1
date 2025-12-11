@@ -1,170 +1,300 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Windows.Forms;
+using Ninject;
+using Shared;
 
 namespace аис_лаба_1
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form, IWineView
     {
-        private Logic logic = new Logic();
+        private BindingList<WineDto> _wines;
+        private BindingSource _bindingSource;
 
+        //РЕАЛИЗАЦИЯ IWineView
+        public event EventHandler LoadWinesRequested;
+        public event EventHandler<WineEventArgs> AddWineRequested;
+        public event EventHandler<WineEventArgs> EditWineRequested;
+        public event EventHandler<DeleteWineEventArgs> DeleteWineRequested;
+        public event EventHandler<SearchWineEventArgs> SearchWinesRequested;
+        public event EventHandler<RateWineEventArgs> RateWineRequested;
+        public event EventHandler ShowBestWinesRequested;
+
+        public WineDto SelectedWine =>
+            dataGridView1.SelectedRows.Count > 0
+                ? dataGridView1.SelectedRows[0].DataBoundItem as WineDto
+                : null;
+
+        public WineDto WineToAdd { get; private set; }
+        public WineDto WineToEdit { get; private set; }
+        public SearchCriteria SearchCriteria { get; private set; }
+        public RatingInfo RatingInfo { get; private set; }
         public Form1()
         {
-            InitializeComponent();
-
             
-            dataGridView1.AutoGenerateColumns = false;
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-
-            // Создание колонок
-            dataGridView1.Columns.Add("Name", "Название");
-            dataGridView1.Columns.Add("Type", "Тип");
-            dataGridView1.Columns.Add("Sugar", "Сахар");
-            dataGridView1.Columns.Add("Homeland", "Страна");
-            dataGridView1.Columns.Add("Mark", "Оценка");
+            InitializeComponent();
+            SetupDataGridView();
+            SetupFormDesign();
             this.BackColor = Color.FromArgb(128, 0, 0);
-            dataGridView1.BackgroundColor = Color.FromArgb(128, 0, 0);
-            dataGridView1.BorderStyle = BorderStyle.None;
-            UpdateDataGrid(logic.GetWines());
-            groupBox1.BackColor = Color.FromArgb(128, 0, 0);
-            groupBox2.BackColor = Color.FromArgb(128, 0, 0);
+
+            //IKernel ninKer = new StandardKernel(new SimpleConfigModule());
+            //logic = ninKer.Get<IWineService>();
+
+            //winesList = new BindingList<WineDto>();
+
+
+            //UpdateDataGrid();
         }
         /// <summary>
-        /// обновление таблицы вин
+        /// Дизайн
         /// </summary>
-        /// <param name="wines"></param>
-        private void UpdateDataGrid(List<Wine> wines)
+        private void SetupFormDesign()
         {
-            dataGridView1.Rows.Clear();
+            this.BackColor = Color.FromArgb(240, 240, 240);
+            this.Text = "Винный каталог - MVP Архитектура";
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.MinimumSize = new Size(800, 600);
+
+            // Настройка стиля кнопок
+            foreach (Control control in this.Controls)
+            {
+                if (control is Button button)
+                {
+                    button.BackColor = Color.FromArgb(70, 130, 180);
+                    button.ForeColor = Color.White;
+                    button.FlatStyle = FlatStyle.Flat;
+                    button.FlatAppearance.BorderSize = 0;
+                    button.Font = new Font("Segoe UI", 10, FontStyle.Regular);
+                    button.Padding = new Padding(10, 5, 10, 5);
+                }
+            }
+        }
+
+        public void DisplayWines(IEnumerable<WineDto> wines)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => DisplayWines(wines)));
+                return;
+            }
+
+            _wines.Clear();
             foreach (var wine in wines)
             {
-                dataGridView1.Rows.Add(
-                    wine.Name,
-                    wine.Type,
-                    wine.Sugar,
-                    wine.Homeland,
-                    wine.Rating
-                );
+                _wines.Add(wine);
             }
+        }
+
+        public void DisplayMessage(string message, MessageType type)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => DisplayMessage(message, type)));
+                return;
+            }
+
+
+            if (type == MessageType.Error)
+            {
+                MessageBox.Show(message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if (type == MessageType.Warning)
+            {
+                MessageBox.Show(message, "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (type == MessageType.Success)
+            {
+
+                this.Text = $"Винный каталог - {message}";
+
+
+                var timer = new Timer { Interval = 3000 };
+                timer.Tick += (s, e) =>
+                {
+                    this.Text = "Винный каталог";
+                    timer.Stop();
+                    timer.Dispose();
+                };
+                timer.Start();
+            }
+        }
+
+        public void ClearWinesDisplay()
+        {
+            _wines.Clear();
+        }
+
+        public void RefreshView()
+        {
+            dataGridView1.Refresh();
+        }
+        private void SetupDataGridView()
+        {
+            _wines = new BindingList<WineDto>();
+            _bindingSource = new BindingSource(_wines, null);
+            dataGridView1.DataSource = _bindingSource;
+
+            // Настройка столбцов
+            dataGridView1.AutoGenerateColumns = false;
+            dataGridView1.Columns.Clear();
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Id",
+                HeaderText = "ID",
+                Width = 50,
+                ReadOnly = true
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Name",
+                HeaderText = "Название",
+                Width = 150,
+                ReadOnly = true
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Type",
+                HeaderText = "Тип",
+                Width = 80,
+                ReadOnly = true
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Sugar",
+                HeaderText = "Сладость",
+                Width = 100,
+                ReadOnly = true
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Homeland",
+                HeaderText = "Страна",
+                Width = 100,
+                ReadOnly = true
+            });
+
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Rating",
+                HeaderText = "Оценка",
+                Width = 60,
+                ReadOnly = true
+            });
+
+            // Настройка внешнего вида
+            dataGridView1.BackgroundColor = Color.White;
+            dataGridView1.BorderStyle = BorderStyle.Fixed3D;
+            dataGridView1.RowHeadersVisible = false;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
         private void AddWineBtn_Click(object sender, EventArgs e)
         {
-            var formAdd = new AddWineForm();
-            if (formAdd.ShowDialog() == DialogResult.OK)
+            using (var addForm = new AddWineForm())
             {
-                if(logic.CheckWineInList(formAdd.wine))
+                if (addForm.ShowDialog() == DialogResult.OK)
                 {
-                    logic.AddWine(formAdd.wine);
-                    UpdateDataGrid(logic.GetWines());
+                    WineToAdd = addForm.WineDto;
+                    AddWineRequested?.Invoke(this, new WineEventArgs(WineToAdd));
                 }
-                else MessageBox.Show("Такое вино уже есть");
             }
-            else
-            {
-                MessageBox.Show("Проверьте заполненные поля");
-            }
+
         }
 
         private void ChangeWineBtn_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (SelectedWine == null)
             {
-                // Получаем выбранное вино из исходного списка
-                int selectedIndex = dataGridView1.SelectedRows[0].Index;
-                Wine selectedWine = logic.GetWines()[selectedIndex];
-
-                var formChange = new EditWineForm(selectedWine);
-                if (formChange.ShowDialog() == DialogResult.OK)
-                {
-                    if (logic.CheckWineInList(formChange.wine))
-                    {
-                        logic.ChangeWine(formChange.wine, selectedIndex);
-                        UpdateDataGrid(logic.GetWines());
-                    }
-                    else MessageBox.Show("Такое вино уже есть");
-                }
-                else
-                {
-                    MessageBox.Show("Проверьте заполненные поля");
-                }
+                DisplayMessage("Выберите вино для редактирования", MessageType.Warning);
+                return;
             }
-            else
+
+            using (var editForm = new EditWineForm(SelectedWine))
             {
-                MessageBox.Show("Нужно выбрать вино");
+                if (editForm.ShowDialog() == DialogResult.OK)
+                {
+                    WineToEdit = editForm.WineDto;
+                    EditWineRequested?.Invoke(this, new WineEventArgs(WineToEdit));
+                }
             }
         }
 
         private void DeleteWineBtn_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (SelectedWine == null)
             {
-                int selectedIndex = dataGridView1.SelectedRows[0].Index;
-                Wine selectedWine = logic.GetWines()[selectedIndex];
-
-                logic.RemoveWine(selectedWine);
-                UpdateDataGrid(logic.GetWines());
+                DisplayMessage("Выберите вино для удаления", MessageType.Warning);
+                return;
             }
-            else
+
+            var result = MessageBox.Show(
+                $"Удалить вино '{SelectedWine.Name}'?",
+                "Подтверждение удаления",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
             {
-                MessageBox.Show("Нужно выбрать вино");
+                DeleteWineRequested?.Invoke(this, new DeleteWineEventArgs(SelectedWine.Id));
             }
         }
 
         private void Search_Click(object sender, EventArgs e)
         {
-            var searchForm = new SearchWineForm();
-            if (DialogResult.OK == searchForm.ShowDialog())
+            using (var searchForm = new SearchWineForm())
             {
-                var elemWine = searchForm.wine;
-
-                UpdateDataGrid(logic.SearchWines(
-                    elemWine.Name,
-                    elemWine.Type,
-                    elemWine.Sugar,
-                    elemWine.Homeland
-                ));
+                if (searchForm.ShowDialog() == DialogResult.OK)
+                {
+                    SearchCriteria = searchForm.Criteria;
+                    SearchWinesRequested?.Invoke(this, new SearchWineEventArgs(SearchCriteria));
+                }
             }
         }
 
         private void AllWine_Click(object sender, EventArgs e)
         {
-            UpdateDataGrid(logic.GetWines());
+            LoadWinesRequested?.Invoke(this, EventArgs.Empty);
         }
 
         private void GettingMarkBtn_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (SelectedWine == null)
             {
-                int selectedIndex = dataGridView1.SelectedRows[0].Index;
-                Wine selectedWine = logic.GetWines()[selectedIndex];
-
-                var gettingMarkForm = new GettingMarkForm();
-                if (DialogResult.OK == gettingMarkForm.ShowDialog())
-                {
-                    logic.GetMark(gettingMarkForm.Mark, selectedWine);
-                    UpdateDataGrid(logic.GetWines());
-                }
+                DisplayMessage("Выберите вино для оценки", MessageType.Warning);
+                return;
             }
-            else
+
+            using (var rateForm = new GettingMarkForm(SelectedWine.Id))
             {
-                MessageBox.Show("Нужно выбрать вино");
+                if (rateForm.ShowDialog() == DialogResult.OK)
+                {
+                    RatingInfo = new RatingInfo
+                    {
+                        WineId = SelectedWine.Id,
+                        Rating = rateForm.Mark
+                    };
+                    RateWineRequested?.Invoke(this, new RateWineEventArgs(RatingInfo.WineId, RatingInfo.Rating));
+                }
             }
         }
 
         private void BestWinesBtn_Click(object sender, EventArgs e)
         {
-            UpdateDataGrid(logic.BestWines());
+            ShowBestWinesRequested?.Invoke(this, EventArgs.Empty);
         }
 
-       
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadWinesRequested?.Invoke(this, EventArgs.Empty);
+
+        }
     }
 }
