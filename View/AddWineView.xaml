@@ -1,12 +1,148 @@
-﻿<Window x:Class="View.AddWineView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:View"
-        mc:Ignorable="d"
-        Title="AddWineView" Height="450" Width="800">
-    <Grid>
-        
+﻿<local:BaseView x:Class="аис_лаба_1.View.AddWineView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:аис_лаба_1.View"
+    mc:Ignorable="d"
+    Title="Добавить/Изменить вино"
+    Height="400"
+    Width="500"
+    WindowStartupLocation="CenterOwner"
+    ResizeMode="NoResize">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Название вина -->
+        <Label Grid.Row="0" Grid.Column="0" 
+               Content="Название:" 
+               VerticalAlignment="Center"
+               Margin="0,0,5,5"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+                 Name="txtName"
+                 Text="{Binding Wine.Name, UpdateSourceTrigger=PropertyChanged}"
+                 Margin="0,0,0,5"
+                 Height="25"/>
+
+        <!-- Тип вина -->
+        <Label Grid.Row="1" Grid.Column="0" 
+               Content="Тип:" 
+               VerticalAlignment="Center"
+               Margin="0,0,5,5"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                  Name="cmbType"
+                  ItemsSource="{Binding WineTypes}"
+                  SelectedItem="{Binding Wine.Type}"
+                  Margin="0,0,0,5"
+                  Height="25"/>
+
+        <!-- Сладость -->
+        <Label Grid.Row="2" Grid.Column="0" 
+               Content="Сладость:" 
+               VerticalAlignment="Center"
+               Margin="0,0,5,5"/>
+        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                  Name="cmbSugar"
+                  ItemsSource="{Binding SugarTypes}"
+                  SelectedItem="{Binding Wine.Sugar}"
+                  Margin="0,0,0,5"
+                  Height="25"/>
+
+        <!-- Страна -->
+        <Label Grid.Row="3" Grid.Column="0" 
+               Content="Страна:" 
+               VerticalAlignment="Center"
+               Margin="0,0,5,5"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                  Name="cmbCountry"
+                  ItemsSource="{Binding Countries}"
+                  SelectedItem="{Binding Wine.Homeland}"
+                  Margin="0,0,0,5"
+                  Height="25"/>
+
+        <!-- Год (опционально) -->
+        <Label Grid.Row="4" Grid.Column="0" 
+               Content="Год:" 
+               VerticalAlignment="Center"
+               Margin="0,0,5,5"/>
+        <TextBox Grid.Row="4" Grid.Column="1" 
+                 Name="txtYear"
+                 Text="{Binding Wine.Year}"
+                 Margin="0,0,5,5"
+                 Height="25"
+                 Width="100"/>
+
+        <!-- Регион (опционально) -->
+        <Label Grid.Row="5" Grid.Column="0" 
+               Content="Регион:" 
+               VerticalAlignment="Center"
+               Margin="0,0,5,5"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
+                 Name="txtRegion"
+                 Text="{Binding Wine.Region}"
+                 Margin="0,0,0,5"
+                 Height="25"/>
+
+        <!-- Сорт винограда (опционально) -->
+        <Label Grid.Row="6" Grid.Column="0" 
+               Content="Сорт винограда:" 
+               VerticalAlignment="Center"
+               Margin="0,0,5,5"/>
+        <TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"
+                 Name="txtGrapeVariety"
+                 Text="{Binding Wine.GrapeVariety}"
+                 Margin="0,0,0,5"
+                 Height="25"/>
+
+        <!-- Описание -->
+        <Label Grid.Row="7" Grid.Column="0" 
+               Content="Описание:" 
+               VerticalAlignment="Top"
+               Margin="0,0,5,5"/>
+        <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2"
+                 Name="txtDescription"
+                 Text="{Binding Wine.Description}"
+                 Margin="0,0,0,5"
+                 Height="80"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"/>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Margin="0,10,0,0">
+            <Button Content="Сохранить" 
+                    Name="btnSave"
+                    Command="{Binding SaveCommand}"
+                    Width="100" 
+                    Height="30"
+                    Margin="5,0"/>
+            <Button Content="Отмена" 
+                    Name="btnCancel"
+                    Command="{Binding CancelCommand}"
+                    Width="100" 
+                    Height="30"
+                    Margin="5,0"/>
+        </StackPanel>
+
     </Grid>
-</Window>
+</local:BaseView>

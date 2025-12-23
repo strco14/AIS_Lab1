@@ -47,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BL.cs" />
+    <Compile Include="WineService.cs" />
     <Compile Include="BusinessLogic.cs" />
     <Compile Include="IDomainObject.cs" />
     <Compile Include="IRepository.cs" />

@@ -1,9 +1,10 @@
-﻿<Application x:Class="View.App"
+﻿<Application x:Class="аис_лаба_1.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:View"
-             StartupUri="MainWindow.xaml">
+             Startup="OnStartup">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <!-- Стили и ресурсы -->
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

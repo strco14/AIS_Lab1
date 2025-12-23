@@ -6,12 +6,13 @@ using System.Reflection;
 using System.Windows.Forms;
 using Ninject;
 using Shared;
+using static Shared.WineDTO;
 
 namespace аис_лаба_1
 {
     public partial class Form1 : Form, IWineView
     {
-        private BindingList<WineDto> _wines;
+        private BindingList<WineDTO> _wines;
         private BindingSource _bindingSource;
 
         //РЕАЛИЗАЦИЯ IWineView
@@ -23,14 +24,14 @@ namespace аис_лаба_1
         public event EventHandler<RateWineEventArgs> RateWineRequested;
         public event EventHandler ShowBestWinesRequested;
 
-        public WineDto SelectedWine =>
+        public WineDTO SelectedWine =>
             dataGridView1.SelectedRows.Count > 0
-                ? dataGridView1.SelectedRows[0].DataBoundItem as WineDto
+                ? dataGridView1.SelectedRows[0].DataBoundItem as WineDTO
                 : null;
 
-        public WineDto WineToAdd { get; private set; }
-        public WineDto WineToEdit { get; private set; }
-        public SearchCriteria SearchCriteria { get; private set; }
+        public WineDTO WineToAdd { get; private set; }
+        public WineDTO WineToEdit { get; private set; }
+        public SearchCriteriaDto SearchCriteria { get; private set; }
         public RatingInfo RatingInfo { get; private set; }
         public Form1()
         {
@@ -73,7 +74,7 @@ namespace аис_лаба_1
             }
         }
 
-        public void DisplayWines(IEnumerable<WineDto> wines)
+        public void DisplayWines(IEnumerable<WineDTO> wines)
         {
             if (InvokeRequired)
             {

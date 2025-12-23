@@ -1,12 +1,496 @@
-﻿<Window x:Class="View.MainWindow"
+﻿<local:BaseView x:Class="аис_лаба_1.View.MainView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:View"
+        xmlns:local="clr-namespace:аис_лаба_1.View"
+        xmlns:vm="clr-namespace:аис_лаба_1.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
-</Window>
+        Title="Винный каталог - MVVM" 
+        Height="600" 
+        Width="900"
+        MinHeight="500"
+        MinWidth="800">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <!-- Стиль для кнопок -->
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+
+        <!-- Стиль для DataGrid -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#FFD3D3D3" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+            <Setter Property="ScrollViewer.PanningMode" Value="Both" />
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="CanUserDeleteRows" Value="False" />
+            <Setter Property="CanUserReorderColumns" Value="False" />
+            <Setter Property="CanUserResizeRows" Value="False" />
+            <Setter Property="CanUserSortColumns" Value="True" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+
+        <!-- Меню -->
+        <Menu DockPanel.Dock="Top" Background="#F0F0F0">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Обновить список" 
+                         Command="{Binding LoadWinesCommand}"
+                         InputGestureText="F5"/>
+                <Separator />
+                <MenuItem Header="Выход" 
+                         Click="MenuItem_Exit_Click"
+                         InputGestureText="Alt+F4"/>
+            </MenuItem>
+            <MenuItem Header="Вина">
+                <MenuItem Header="Добавить вино..." 
+                         Command="{Binding AddWineCommand}"
+                         InputGestureText="Ctrl+N"/>
+                <MenuItem Header="Редактировать вино..." 
+                         Command="{Binding EditWineCommand}"
+                         InputGestureText="Ctrl+E"/>
+                <MenuItem Header="Удалить вино" 
+                         Command="{Binding DeleteWineCommand}"
+                         InputGestureText="Del"/>
+                <Separator />
+                <MenuItem Header="Поиск вин..." 
+                         Command="{Binding SearchWinesCommand}"
+                         InputGestureText="Ctrl+F"/>
+                <MenuItem Header="Показать лучшие вина" 
+                         Command="{Binding ShowBestWinesCommand}"
+                         InputGestureText="Ctrl+B"/>
+            </MenuItem>
+            <MenuItem Header="Справка">
+                <MenuItem Header="О программе" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Панель инструментов -->
+        <ToolBarTray DockPanel.Dock="Top" Background="#F8F8F8">
+            <ToolBar>
+                <Button Command="{Binding LoadWinesCommand}" 
+                       ToolTip="Обновить список вин">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/refresh.png" Width="16" Height="16" Margin="0,0,3,0"/>
+                        <TextBlock Text="Обновить"/>
+                    </StackPanel>
+                </Button>
+                <Separator />
+                <Button Command="{Binding AddWineCommand}" 
+                       ToolTip="Добавить новое вино">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/add.png" Width="16" Height="16" Margin="0,0,3,0"/>
+                        <TextBlock Text="Добавить"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding EditWineCommand}" 
+                       ToolTip="Редактировать выбранное вино">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/edit.png" Width="16" Height="16" Margin="0,0,3,0"/>
+                        <TextBlock Text="Изменить"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding DeleteWineCommand}" 
+                       ToolTip="Удалить выбранное вино">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/delete.png" Width="16" Height="16" Margin="0,0,3,0"/>
+                        <TextBlock Text="Удалить"/>
+                    </StackPanel>
+                </Button>
+                <Separator />
+                <Button Command="{Binding SearchWinesCommand}" 
+                       ToolTip="Поиск вин по параметрам">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/search.png" Width="16" Height="16" Margin="0,0,3,0"/>
+                        <TextBlock Text="Поиск"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ShowBestWinesCommand}" 
+                       ToolTip="Показать вина с наивысшим рейтингом">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/star.png" Width="16" Height="16" Margin="0,0,3,0"/>
+                        <TextBlock Text="Лучшие"/>
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- Основной контент -->
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Левая часть - список вин -->
+            <Border Grid.Column="0" 
+                   BorderBrush="#CCCCCC" 
+                   BorderThickness="1" 
+                   CornerRadius="3" 
+                   Margin="0,0,5,0">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" 
+                              Text="Список вин" 
+                              FontSize="14" 
+                              FontWeight="Bold" 
+                              Margin="10,10,10,5"/>
+
+                    <DataGrid x:Name="WinesGrid"
+                             ItemsSource="{Binding Wines}"
+                             SelectedItem="{Binding SelectedWine}"
+                             AutoGenerateColumns="False"
+                             IsReadOnly="True"
+                             SelectionMode="Single"
+                             SelectionUnit="FullRow"
+                             GridLinesVisibility="Horizontal"
+                             AlternatingRowBackground="#F5F5F5"
+                             RowDetailsVisibilityMode="Collapsed"
+                             Margin="10,0,10,10"
+                             VerticalGridLinesBrush="Transparent"
+                             HorizontalGridLinesBrush="#E0E0E0"
+                             BorderThickness="0">
+
+                        <DataGrid.Columns>
+                            <!-- ID -->
+                            <DataGridTextColumn Header="ID" 
+                                               Binding="{Binding Id}" 
+                                               Width="50"
+                                               IsReadOnly="True"
+                                               CanUserSort="True"/>
+
+                            <!-- Название -->
+                            <DataGridTextColumn Header="Название" 
+                                               Binding="{Binding Name}" 
+                                               Width="200"
+                                               CanUserSort="True"/>
+
+                            <!-- Тип -->
+                            <DataGridTextColumn Header="Тип" 
+                                               Binding="{Binding Type}" 
+                                               Width="80"
+                                               CanUserSort="True"/>
+
+                            <!-- Сладость -->
+                            <DataGridTextColumn Header="Сладость" 
+                                               Binding="{Binding Sugar}" 
+                                               Width="100"
+                                               CanUserSort="True"/>
+
+                            <!-- Страна -->
+                            <DataGridTextColumn Header="Страна" 
+                                               Binding="{Binding Homeland}" 
+                                               Width="120"
+                                               CanUserSort="True"/>
+
+                            <!-- Оценка -->
+                            <DataGridTextColumn Header="Оценка" 
+                                               Binding="{Binding Rating}" 
+                                               Width="60"
+                                               CanUserSort="True">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="#0066CC"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <EventSetter Event="MouseDoubleClick" Handler="DataGridRow_MouseDoubleClick"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#E3F2FD"/>
+                                        <Setter Property="BorderBrush" Value="#2196F3"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+
+            <!-- Правая часть - детали -->
+            <Border Grid.Column="1" 
+                   BorderBrush="#CCCCCC" 
+                   BorderThickness="1" 
+                   CornerRadius="3">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="15">
+                        <TextBlock Text="Детали вина" 
+                                  FontSize="16" 
+                                  FontWeight="Bold" 
+                                  Foreground="#333333"
+                                  Margin="0,0,0,15"/>
+
+                        <!-- Название -->
+                        <Border Background="#F8F8F8" 
+                               CornerRadius="3" 
+                               Padding="10" 
+                               Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="Название" 
+                                          FontSize="12" 
+                                          Foreground="#666666"/>
+                                <TextBlock Text="{Binding SelectedWine.Name}" 
+                                          FontSize="18" 
+                                          FontWeight="SemiBold"
+                                          TextWrapping="Wrap"
+                                          Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Основные характеристики -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Тип -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                      Text="Тип:" 
+                                      FontWeight="Bold"
+                                      Margin="0,0,10,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" 
+                                      Text="{Binding SelectedWine.Type}"
+                                      Margin="0,0,0,5"/>
+
+                            <!-- Сладость -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" 
+                                      Text="Сладость:" 
+                                      FontWeight="Bold"
+                                      Margin="0,0,10,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" 
+                                      Text="{Binding SelectedWine.Sugar}"
+                                      Margin="0,0,0,5"/>
+
+                            <!-- Страна -->
+                            <TextBlock Grid.Row="2" Grid.Column="0" 
+                                      Text="Страна:" 
+                                      FontWeight="Bold"
+                                      Margin="0,0,10,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" 
+                                      Text="{Binding SelectedWine.Homeland}"
+                                      Margin="0,0,0,5"/>
+
+                            <!-- Оценка -->
+                            <TextBlock Grid.Row="3" Grid.Column="0" 
+                                      Text="Оценка:" 
+                                      FontWeight="Bold"
+                                      Margin="0,0,10,5"/>
+                            <StackPanel Grid.Row="3" Grid.Column="1" 
+                                       Orientation="Horizontal"
+                                       Margin="0,0,0,5">
+                                <TextBlock Text="{Binding SelectedWine.Rating}" 
+                                          FontWeight="Bold"
+                                          Foreground="#FF9800"/>
+                                <TextBlock Text="/5" 
+                                          Margin="2,0,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Оценка вина -->
+                        <Border BorderBrush="#DDDDDD" 
+                               BorderThickness="1" 
+                               CornerRadius="3" 
+                               Padding="15"
+                               Background="White"
+                               Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Оценить вино" 
+                                          FontSize="14" 
+                                          FontWeight="Bold"
+                                          Margin="0,0,0,10"/>
+
+                                <StackPanel Orientation="Horizontal" 
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,5">
+                                    <!-- Кнопки оценки -->
+                                    <Button Content="1" 
+                                           Width="40" 
+                                           Height="40"
+                                           Margin="2"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Command="{Binding RateWineCommand}"
+                                           CommandParameter="1"
+                                           ToolTip="Очень плохо">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                <Setter Property="Background" Value="#E8E8E8"/>
+                                                <Setter Property="Foreground" Value="#333333"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#4CAF50"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Content="2" 
+                                           Width="40" 
+                                           Height="40"
+                                           Margin="2"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Command="{Binding RateWineCommand}"
+                                           CommandParameter="2"
+                                           ToolTip="Плохо">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                <Setter Property="Background" Value="#E8E8E8"/>
+                                                <Setter Property="Foreground" Value="#333333"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#8BC34A"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Content="3" 
+                                           Width="40" 
+                                           Height="40"
+                                           Margin="2"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Command="{Binding RateWineCommand}"
+                                           CommandParameter="3"
+                                           ToolTip="Удовлетворительно">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                <Setter Property="Background" Value="#E8E8E8"/>
+                                                <Setter Property="Foreground" Value="#333333"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#FFC107"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Content="4" 
+                                           Width="40" 
+                                           Height="40"
+                                           Margin="2"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Command="{Binding RateWineCommand}"
+                                           CommandParameter="4"
+                                           ToolTip="Хорошо">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                <Setter Property="Background" Value="#E8E8E8"/>
+                                                <Setter Property="Foreground" Value="#333333"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#FF9800"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Content="5" 
+                                           Width="40" 
+                                           Height="40"
+                                           Margin="2"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Command="{Binding RateWineCommand}"
+                                           CommandParameter="5"
+                                           ToolTip="Отлично">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                <Setter Property="Background" Value="#E8E8E8"/>
+                                                <Setter Property="Foreground" Value="#333333"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#F44336"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+
+                                <TextBlock Text="Выберите оценку от 1 до 5" 
+                                          HorizontalAlignment="Center" 
+                                          FontSize="11"
+                                          Foreground="#666666"
+                                          Margin="0,5,0,0"
+                                          FontStyle="Italic"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Информация о количестве -->
+                        <Border Background="#F5F5F5" 
+                               CornerRadius="3" 
+                               Padding="10" 
+                               Margin="0,15,0,0">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Wines.Count, StringFormat='Всего вин в каталоге: {0}'}" 
+                                          FontSize="12"/>
+                                <TextBlock Text="{Binding StatusMessage}" 
+                                          FontSize="12"
+                                          FontStyle="Italic"
+                                          Margin="0,5,0,0"
+                                          TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <!-- Строка состояния -->
+        <StatusBar DockPanel.Dock="Bottom" 
+                  Background="#F0F0F0" 
+                  Height="25">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}" 
+                          VerticalAlignment="Center"
+                          Margin="5,0"/>
+            </StatusBarItem>
+            <Separator />
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="{Binding Wines.Count, StringFormat='Вин: {0}'}" 
+                          VerticalAlignment="Center"
+                          Margin="5,0"/>
+            </StatusBarItem>
+        </StatusBar>
+
+    </DockPanel>
+</local:BaseView>

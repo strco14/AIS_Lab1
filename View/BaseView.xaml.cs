@@ -1,27 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using ViewModel;
+using ModelLib;
+using DAL;
+using Shared;
 
 namespace View
 {
     /// <summary>
-    /// Логика взаимодействия для BaseView.xaml
+    /// Базовое окно для всех View.
     /// </summary>
     public partial class BaseView : Window
     {
         public BaseView()
         {
-            InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
     }
 }

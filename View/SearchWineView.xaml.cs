@@ -11,13 +11,17 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ViewModel;
+using ModelLib;
+using DAL;
+using Shared;
 
 namespace View
 {
     /// <summary>
     /// Логика взаимодействия для SearchWineView.xaml
     /// </summary>
-    public partial class SearchWineView : Window
+    public partial class SearchWineView : BaseView
     {
         public SearchWineView()
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Shared.WineDTO;
 
 namespace Shared
 {
@@ -21,7 +22,7 @@ namespace Shared
         /// Отображение вин
         /// </summary>
         /// <param name="wines"></param>
-        void DisplayWines(IEnumerable<WineDto> wines);
+        void DisplayWines(IEnumerable<WineDTO> wines);
         /// <summary>
         /// Уведомления
         /// </summary>
@@ -32,44 +33,44 @@ namespace Shared
         /// </summary>
         void ClearWinesDisplay();
 
-        WineDto SelectedWine { get; }
-        WineDto WineToAdd { get; }
-        WineDto WineToEdit { get; }
-        SearchCriteria SearchCriteria { get; }
+        WineDTO SelectedWine { get; }
+        WineDTO WineToAdd { get; }
+        WineDTO WineToEdit { get; }
+        SearchCriteriaDto SearchCriteria { get; }
         RatingInfo RatingInfo { get; }
     }
-    public class WineDto
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string Sugar { get; set; }
-        public string Homeland { get; set; }
-        public string Rating { get; set; } = "0";
-        public WineDto(string id, string name, string type, string sugar, string homeland, string rating)
-        {
-            Id = id;
-            Name = name;
-            Type = type;
-            Sugar = sugar;
-            Homeland = homeland;
-            Rating = rating;
-        }
-        public WineDto(string name, string type, string sugar, string homeland)
-        {
-            Name = name;
-            Type = type;
-            Sugar = sugar;
-            Homeland = homeland;
-        }
-    }
-    public class SearchCriteria
-    {
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string Sugar { get; set; }
-        public string Homeland { get; set; }
-    }
+    //    public class WineDto
+    //    {
+    //        public string Id { get; set; }
+    //        public string Name { get; set; }
+    //        public string Type { get; set; }
+    //        public string Sugar { get; set; }
+    //        public string Homeland { get; set; }
+    //        public string Rating { get; set; } = "0";
+    //        public WineDto(string id, string name, string type, string sugar, string homeland, string rating)
+    //        {
+    //            Id = id;
+    //            Name = name;
+    //            Type = type;
+    //            Sugar = sugar;
+    //            Homeland = homeland;
+    //            Rating = rating;
+    //        }
+    //        public WineDto(string name, string type, string sugar, string homeland)
+    //        {
+    //            Name = name;
+    //            Type = type;
+    //            Sugar = sugar;
+    //            Homeland = homeland;
+    //        }
+    //    }
+    //    public class SearchCriteria
+    //    {
+    //        public string Name { get; set; }
+    //        public string Type { get; set; }
+    //        public string Sugar { get; set; }
+    //        public string Homeland { get; set; }
+    //    }
 
     public class RatingInfo
     {
@@ -86,11 +87,7 @@ namespace Shared
     }
 
 
-    public class WineEventArgs : EventArgs
-    {
-        public WineDto Wine { get; }
-        public WineEventArgs(WineDto wine) => Wine = wine;
-    }
+
 
     public class DeleteWineEventArgs : EventArgs
     {
@@ -100,8 +97,8 @@ namespace Shared
 
     public class SearchWineEventArgs : EventArgs
     {
-        public SearchCriteria Criteria { get; }
-        public SearchWineEventArgs(SearchCriteria criteria) => Criteria = criteria;
+        public SearchCriteriaDto Criteria { get; }
+        public SearchWineEventArgs(SearchCriteriaDto criteria) => Criteria = criteria;
     }
 
     public class RateWineEventArgs : EventArgs

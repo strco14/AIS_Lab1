@@ -11,13 +11,17 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ViewModel;
+using ModelLib;
+using DAL;
+using Shared;
 
 namespace View
 {
     /// <summary>
     /// Логика взаимодействия для EditWineView.xaml
     /// </summary>
-    public partial class EditWineView : Window
+    public partial class EditWineView : BaseView
     {
         public EditWineView()
         {

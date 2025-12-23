@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using DAL;
-using ModelLib;
-namespace аис_лаба_1
+
+namespace ModelLib
 {
     public class BusinessLogic : IWineBusinessService
     {

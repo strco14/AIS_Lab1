@@ -11,17 +11,28 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ViewModel;
+using ModelLib;
+using DAL;
+using Shared;
 
 namespace View
 {
     /// <summary>
     /// Логика взаимодействия для AddWineView.xaml
     /// </summary>
-    public partial class AddWineView : Window
+    public partial class AddWineView : BaseView
     {
         public AddWineView()
         {
             InitializeComponent();
+            if (DataContext is WineEditorViewModel viewModel)
+            {
+                viewModel.ShowError = (message, title) =>
+                    MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                viewModel.RequestClose += (s, e) => this.Close();
+            }
         }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
-using ModelLib;
 
-namespace аис_лаба_1
+
+namespace ModelLib
 {
     public interface IWineService : IWineBusinessService
     {
-        event EventHandler<WineEventArgs> WineAdded;
         event EventHandler<WineChangedEventArgs> WineChanged;
         event EventHandler<WineDeletedEventArgs> WineDeleted;
         event EventHandler<WineRatedEventArgs> WineRated;
@@ -52,11 +51,6 @@ namespace аис_лаба_1
         /// <param name="index">индекс</param>
         void ChangeWine(string name, string type, string sugar, string homeland, int index);
     }
-    public class WineEventArgs : EventArgs
-    {
-        public Wine Wine { get; }
-        public WineEventArgs(Wine wine) => Wine = wine;
-    }
 
     public class WineChangedEventArgs : EventArgs
     {
@@ -81,6 +75,7 @@ namespace аис_лаба_1
         public int WineId { get; }
         public WineDeletedEventArgs(int wineId) => WineId = wineId;
     }
+
 
     public class WineRatedEventArgs : EventArgs
     {

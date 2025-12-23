@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Ninject;
 using Shared;
+using static Shared.WineDTO;
 
 namespace аис_лаба_1._1
 {
@@ -15,12 +16,12 @@ namespace аис_лаба_1._1
             var program = new Program();
             program.Start();
         }
-        private List<WineDto> _currentWines = new List<WineDto>();
+        private List<WineDTO> _currentWines = new List<WineDTO>();
         private bool _isRunning = true;
-        public WineDto SelectedWine { get; private set; }
-        public WineDto WineToAdd { get; private set; }
-        public WineDto WineToEdit { get; private set; }
-        public SearchCriteria SearchCriteria { get; private set; }
+        public WineDTO SelectedWine { get; private set; }
+        public WineDTO WineToAdd { get; private set; }
+        public WineDTO WineToEdit { get; private set; }
+        public SearchCriteriaDto SearchCriteria { get; private set; }
         public RatingInfo RatingInfo { get; private set; }
 
         public event EventHandler LoadWinesRequested;
@@ -133,7 +134,7 @@ namespace аис_лаба_1._1
                 !string.IsNullOrWhiteSpace(sugar) &&
                 !string.IsNullOrWhiteSpace(country))
             {
-                WineToAdd = new WineDto
+                WineToAdd = new WineDTO
                 (
                     name: name,
                     type: type,
@@ -231,12 +232,12 @@ namespace аис_лаба_1._1
             Console.Write("Страна: ");
             string country = Console.ReadLine();
 
-            SearchCriteria = new SearchCriteria
+            SearchCriteria = new   SearchCriteriaDto
             {
                 Name = string.IsNullOrWhiteSpace(name) ? null : name,
                 Type = string.IsNullOrWhiteSpace(type) ? null : type,
                 Sugar = string.IsNullOrWhiteSpace(sugar) ? null : sugar,
-                Homeland = string.IsNullOrWhiteSpace(country) ? null : country
+                Country = string.IsNullOrWhiteSpace(country) ? null : country
             };
 
             SearchWinesRequested?.Invoke(this, new SearchWineEventArgs(SearchCriteria));
@@ -295,7 +296,7 @@ namespace аис_лаба_1._1
         }
 
         // ========== МЕТОДЫ IWineView ==========
-        public void DisplayWines(IEnumerable<WineDto> wines)
+        public void DisplayWines(IEnumerable<WineDTO> wines)
         {
             _currentWines = wines.ToList();
 

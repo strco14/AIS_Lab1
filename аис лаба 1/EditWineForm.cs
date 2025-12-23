@@ -8,9 +8,9 @@ namespace аис_лаба_1
 {
     public partial class EditWineForm : Form
     {
-        public WineDto WineDto { get; private set; }
-        private WineDto _originalWine;
-        public EditWineForm(WineDto wineToEdit)
+        public WineDTO WineDto { get; private set; }
+        private WineDTO _originalWine;
+        public EditWineForm(WineDTO wineToEdit)
         {
             InitializeComponent();
 
@@ -74,7 +74,7 @@ namespace аис_лаба_1
         {
             if (ValidateInput())
             {
-                WineDto = new WineDto(
+                WineDto = new WineDTO(
                 id: _originalWine.Id,
                 name: nameWine.Text.Trim(),
                 type: type.SelectedItem.ToString(),

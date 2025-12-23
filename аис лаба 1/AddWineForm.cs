@@ -9,7 +9,7 @@ namespace аис_лаба_1
 {
     public partial class AddWineForm : Form
     {
-        public WineDto WineDto { get; private set; }
+        public WineDTO WineDto { get; private set; }
         public AddWineForm()
         {
             InitializeComponent();
@@ -25,7 +25,7 @@ namespace аис_лаба_1
         {
             if (ValidateInput())
             {
-                WineDto = new WineDto(
+                WineDto = new WineDTO(
             name: nameWine.Text.Trim(),
             type: type.SelectedItem.ToString(),
             sugar: sugar.SelectedItem.ToString(),

@@ -1,4 +1,4 @@
-﻿namespace аис_лаба_1
+﻿namespace ModelLib
 {
     public interface IWineBusinessService
     {

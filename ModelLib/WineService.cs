@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ModelLib;
-using DAL;
-namespace аис_лаба_1
+
+namespace ModelLib
 {
     public class WineService : IWineService
     {
@@ -24,7 +23,7 @@ namespace аис_лаба_1
             //repos.Add(new Wine("Изабелла", "Красное", "Полусладкое", "Россия"));
             //repos.Add(new Wine("Токай", "Белое", "Сладкое", "Аргентина"));
         }
-        public event EventHandler<WineEventArgs> WineAdded;
+        public event EventHandler<WineAddedEventArgs> WineAdded;
         public event EventHandler<WineChangedEventArgs> WineChanged;
         public event EventHandler<WineDeletedEventArgs> WineDeleted;
         public event EventHandler<WineRatedEventArgs> WineRated;
@@ -72,7 +71,7 @@ namespace аис_лаба_1
             Wine wine = new Wine(name, type, sugar, homeland);
             repos.Add(wine);
             repos.Update(wine);
-            WineAdded?.Invoke(this, new WineEventArgs(wine));
+            WineAdded?.Invoke(this, new WineAddedEventArgs(wine));
         }
         /// <summary>
         /// Проверка, было ли уже такое вино добавлено
@@ -151,5 +150,10 @@ namespace аис_лаба_1
             businessService.GetMark(mark, id);
             WineRated?.Invoke(this, new WineRatedEventArgs(id, mark));
         }
+    }
+    public class WineAddedEventArgs : EventArgs
+    {
+        public Wine Wine { get; }
+        public WineAddedEventArgs(Wine wine) => Wine = wine;
     }
 }

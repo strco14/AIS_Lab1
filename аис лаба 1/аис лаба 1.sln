@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "..\Shared\Shared.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presenter", "..\Presenter\Presenter.csproj", "{0B2B1D21-E941-4ADC-96B8-6ED12DEA5AD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "View", "..\View\View.csproj", "{22038019-147C-4DCD-B500-F679A2200FBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "..\ViewModel\ViewModel.csproj", "{6F74ED23-8381-4FAD-BB4B-5F45108809F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,9 +46,16 @@ Global
 		{10D3D3EB-67C3-46F0-B4F4-0452A3DA2DC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10D3D3EB-67C3-46F0-B4F4-0452A3DA2DC1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B2B1D21-E941-4ADC-96B8-6ED12DEA5AD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B2B1D21-E941-4ADC-96B8-6ED12DEA5AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B2B1D21-E941-4ADC-96B8-6ED12DEA5AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B2B1D21-E941-4ADC-96B8-6ED12DEA5AD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22038019-147C-4DCD-B500-F679A2200FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22038019-147C-4DCD-B500-F679A2200FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22038019-147C-4DCD-B500-F679A2200FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22038019-147C-4DCD-B500-F679A2200FBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F74ED23-8381-4FAD-BB4B-5F45108809F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F74ED23-8381-4FAD-BB4B-5F45108809F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F74ED23-8381-4FAD-BB4B-5F45108809F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F74ED23-8381-4FAD-BB4B-5F45108809F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
